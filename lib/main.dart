@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +57,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _search = "";
+
+  Future<Map> getGif() async {
+    http.Response response;
+    if (_search == "") {
+      response = await http.get(
+          'https://api.giphy.com/v1/gifs/trending?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n=$_search&lang=en'
+              as Uri);
+    } else {
+      response = await http.get(
+          'https://api.giphy.com/v1/gifs/search?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n=$_search&lang=en'
+              as Uri);
+    }
+    return json.decode(response.body);
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -64,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
@@ -109,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              'text',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
