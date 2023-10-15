@@ -1,14 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -36,14 +40,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String _searchQuery = "";
   List<dynamic> _gifs = [];
 
-  Future<void> _fetchGifs() async {
+  void _fetchGifs() async {
     Uri apiUrl;
     if (_searchQuery == "") {
       apiUrl = Uri.parse(
           'https://api.giphy.com/v1/gifs/trending?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&lang=en');
     } else {
       apiUrl = Uri.parse(
-          'https://api.giphy.com/v1/gifs/search?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&q=$_searchQuery&lang=en');
+          'https://api.giphy.com/v1/gifs/search?q=$_searchQuery&api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&lang=en');
     }
 
     final response = await http.get(apiUrl);
@@ -56,11 +60,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchGifs().then((value) => print);
+    _fetchGifs();
   }
 
   Timer? timer;
-  onSearchTextChanged(String text) async {
+  onSearchValuesChanged(String text) async {
     timer?.cancel();
     timer = Timer(
       const Duration(milliseconds: 250),
@@ -77,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blueGrey,
         title: Text(widget.title),
       ),
       body: Center(
@@ -86,13 +90,36 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             TextField(
               onChanged: (text) {
-                onSearchTextChanged(text);
+                onSearchValuesChanged(text);
               },
+              controller: editingController,
+              decoration: InputDecoration(
+                  labelText: "Search",
+                  hintText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25)))),
             ),
-            Text(
-              'text',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Expanded(
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8),
+                    itemCount: _gifs.length,
+                    itemBuilder: (context, index) {
+                      final gif = _gifs[index];
+                      final imageUrl = gif['images']['fixed_height']['url'];
+                      return CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          placeholder: (context, url) => SizedBox(
+                                height: 50.0,
+                                width: 50.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ));
+                    }))
           ],
         ),
       ),
