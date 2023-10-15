@@ -37,23 +37,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController editingController = TextEditingController();
+  ScrollController scrollController = ScrollController();
   String _searchQuery = "";
+  num _offset = 0;
+  final int _nextPageTrigger = 6;
   List<dynamic> _gifs = [];
 
   void _fetchGifs() async {
     Uri apiUrl;
     if (_searchQuery == "") {
       apiUrl = Uri.parse(
-          'https://api.giphy.com/v1/gifs/trending?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&lang=en');
+          'https://api.giphy.com/v1/gifs/trending?api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&offset=$_offset&lang=en');
     } else {
       apiUrl = Uri.parse(
-          'https://api.giphy.com/v1/gifs/search?q=$_searchQuery&api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&lang=en');
+          'https://api.giphy.com/v1/gifs/search?q=$_searchQuery&api_key=DOthYIIXGUzcO2eqKtZkE9WIUxHZLO9n&offset=$_offset&lang=en');
     }
 
     final response = await http.get(apiUrl);
     final data = json.decode(response.body);
     setState(() {
-      _gifs = data['data'];
+      _gifs.addAll(data['data']);
+      _offset += data['pagination']['count'];
     });
   }
 
@@ -71,6 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
       () {
         setState(() {
           _searchQuery = text;
+          _offset = 0;
+          _gifs.clear();
         });
         _fetchGifs();
       },
@@ -108,6 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisSpacing: 8),
                     itemCount: _gifs.length,
                     itemBuilder: (context, index) {
+                      if (index == _gifs.length - _nextPageTrigger) {
+                        _fetchGifs();
+                      }
                       final gif = _gifs[index];
                       final imageUrl = gif['images']['fixed_height']['url'];
                       return CachedNetworkImage(
@@ -116,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: 50.0,
                                 width: 50.0,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                                  strokeWidth: 2.0,
                                 ),
                               ));
                     }))
