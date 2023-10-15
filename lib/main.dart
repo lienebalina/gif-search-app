@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   hintText: "Search",
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25)))),
+                      borderRadius: BorderRadius.all(Radius.circular(10)))),
             ),
             Expanded(
                 child: GridView.builder(
@@ -122,10 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       return CachedNetworkImage(
                           imageUrl: imageUrl,
                           placeholder: (context, url) => SizedBox(
-                                height: 50.0,
-                                width: 50.0,
+                                width: 30,
+                                height: 30,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2.0,
+                                  strokeWidth: 2,
                                 ),
                               ));
                     }))
