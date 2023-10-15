@@ -8,6 +8,10 @@ Welcome to Gif Search App, where you can see the now trending gifs or look up an
 - "live search" - you don't have to submit your search - the app will look it up for you!
 - User-friendly pagination - the page below loads even before you reach the bottom.
 
+## How it works
+
+<img src="https://github.com/lienebalina/gif-search-app/blob/main/media/video.gif" width="300" height="500" />
+
 ## How to use
 
 ```
@@ -33,6 +37,7 @@ just resize the window's width to the maximum it lets you *
 - This is my first ever flutter app, so the biggest challenge I had to face was to understand how the app comes together without using the <div> and other components I am used to.
 - I had to understand how the giphy API works and then had to understand how to even make the gif appear in my app.
 - By completion of this project I got a wave of motivation to learn more about flutter and how to make even more complicated app than this one.
+- Can't figure out yet why the loading indicator doesn't resize :(
 
 ## What could I have done better
 
